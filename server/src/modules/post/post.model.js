@@ -46,7 +46,6 @@ const postSchema = new mongoose.Schema(
     community: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Community",
-      required: true,
       index: true,
     },
 

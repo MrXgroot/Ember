@@ -2,35 +2,42 @@
 
 import postRepository from "./post.repository.js";
 
+const POST_POPULATE = [
+  {
+    path: "user",
+    select: "displayName username avatar",
+  },
+  {
+    path: "community",
+    select: "name slug avatar",
+  },
+];
+
 class PostService {
   async createPost(postData) {
-    const post = await postRepository.create(postData);
-
-    return post;
+    return await postRepository.create(postData);
   }
 
   async getPosts(filters = {}, options = {}) {
-    const posts = await postRepository.findMany(filters, options);
-
-    return posts;
+    return await postRepository.findMany(filters, {
+      ...options,
+      populate: POST_POPULATE,
+    });
   }
 
-  async getPost(postId) {
-    const post = await postRepository.findById(postId);
-
-    return post;
+  async getPost(postId, options = {}) {
+    return await postRepository.findById(postId, {
+      ...options,
+      populate: POST_POPULATE,
+    });
   }
 
   async updatePost(postId, updateData) {
-    const post = await postRepository.updateById(postId, updateData);
-
-    return post;
+    return await postRepository.updateById(postId, updateData);
   }
 
   async deletePost(postId) {
-    await postRepository.deleteById(postId);
-
-    return;
+    return await postRepository.deleteById(postId);
   }
 }
 

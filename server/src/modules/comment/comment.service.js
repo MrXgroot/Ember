@@ -7,10 +7,7 @@ class CommentService {
     return await commentRepository.create(commentData);
   }
 
-  async getComments(query = {}) {
-    const filters = {};
-    const options = {};
-
+  async getComments(filters = {}, options = {}) {
     // We'll add filtering, sorting, pagination later.
 
     return await commentRepository.findMany(filters, options);

@@ -23,4 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-docs/chukki.md
+docs/
+server/src/migrate.js
+test/
+server/scripts/

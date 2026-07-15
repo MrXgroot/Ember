@@ -10,7 +10,11 @@ class CommentController {
   }
 
   async getComments(req, res) {
-    const comments = await commentService.getComments(req.query);
+    const { postId } = req.params;
+    console.log(postId);
+    const comments = await commentService.getComments({
+      post: postId,
+    });
     res.status(200).json(comments);
   }
 
