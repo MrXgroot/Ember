@@ -1,31 +1,43 @@
-// modules/user/user.model.js
-
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    username: {
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+
+    email: {
       type: String,
       required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+
+    username: {
+      type: String,
       unique: true,
       trim: true,
       lowercase: true,
       minlength: 3,
       maxlength: 30,
+      default: null,
     },
 
     displayName: {
       type: String,
-      required: true,
       trim: true,
       maxlength: 50,
+      default: null,
     },
 
     bio: {
       type: String,
-      trim: true,
       default: "",
       maxlength: 300,
+      trim: true,
     },
 
     avatar: {
@@ -36,6 +48,11 @@ const userSchema = new mongoose.Schema(
     banner: {
       type: String,
       default: "",
+    },
+
+    onboardingCompleted: {
+      type: Boolean,
+      default: false,
     },
   },
   {

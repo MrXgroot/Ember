@@ -40,13 +40,11 @@ class PostRepository {
   }
 
   async updateById(postId, updateData, options = {}) {
-    let query = Post.findByIdAndUpdate(postId, updateData, {
-      new: true,
+    return await Post.findByIdAndUpdate(postId, updateData, {
+      returnDocument: "after",
       runValidators: true,
       ...options,
     });
-
-    return await query;
   }
 
   async deleteById(postId) {
@@ -59,6 +57,20 @@ class PostRepository {
 
   async exists(filter) {
     return await Post.exists(filter);
+  }
+
+  async incrementScore(postId, amount) {
+    return await Post.findByIdAndUpdate(
+      postId,
+      {
+        $inc: {
+          "metrics.score": amount,
+        },
+      },
+      {
+        returnDocument: "after",
+      },
+    );
   }
 }
 

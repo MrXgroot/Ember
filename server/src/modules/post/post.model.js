@@ -47,6 +47,7 @@ const postSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Community",
       index: true,
+      default: null,
     },
 
     title: {
@@ -63,8 +64,19 @@ const postSchema = new mongoose.Schema(
     },
 
     media: {
-      type: [mediaSchema],
-      default: [],
+      type: mediaSchema,
+      default: null,
+    },
+    metrics: {
+      score: {
+        type: Number,
+        default: 0,
+      },
+
+      comments: {
+        type: Number,
+        default: 0,
+      },
     },
   },
   {

@@ -1,0 +1,1 @@
+export { useCreatePostController } from "./controller";

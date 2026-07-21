@@ -19,6 +19,27 @@ class CommentRepository {
     return await Comment.find(filter, null, options);
   }
 
+  async findByPost(postId, options = {}) {
+    return await Comment.find(
+      {
+        post: postId,
+        parent: null,
+      },
+      null,
+      options,
+    );
+  }
+
+  async findReplies(parentId, options = {}) {
+    return await Comment.find(
+      {
+        parent: parentId,
+      },
+      null,
+      options,
+    );
+  }
+
   async updateById(id, commentData) {
     return await Comment.findByIdAndUpdate(id, commentData, {
       new: true,

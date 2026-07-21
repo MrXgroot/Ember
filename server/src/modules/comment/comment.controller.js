@@ -3,40 +3,93 @@
 import commentService from "./comment.service.js";
 
 class CommentController {
-  async createComment(req, res) {
-    const comment = await commentService.createComment(req.body);
-
-    res.status(201).json(comment);
+  async createComment(req, res, next) {
+    const { content, parent = null } = req.body;
+    try {
+      const comment = await commentService.createComment({
+        post: req.params.postId,
+        user: req.user.id,
+        content,
+        parent,
+      });
+      res.status(201).json({
+        message: "Comment created successfully.",
+        data: {
+          comment,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async getComments(req, res) {
-    const { postId } = req.params;
-    console.log(postId);
-    const comments = await commentService.getComments({
-      post: postId,
-    });
-    res.status(200).json(comments);
+  async getComments(req, res, next) {
+    try {
+      const comments = await commentService.getComments(
+        {
+          post: req.params.postId,
+        },
+        {
+          sort: {
+            createdAt: 1,
+          },
+        },
+      );
+
+      res.json({
+        message: "Comments fetched successfully.",
+        data: {
+          comments,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async getComment(req, res) {
-    const comment = await commentService.getComment(req.params.commentId);
+  async getComment(req, res, next) {
+    try {
+      const comment = await commentService.getComment(req.params.commentId);
 
-    res.status(200).json(comment);
+      res.json({
+        message: "Comment fetched successfully.",
+        data: {
+          comment,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async updateComment(req, res) {
-    const comment = await commentService.updateComment(
-      req.params.commentId,
-      req.body,
-    );
+  async updateComment(req, res, next) {
+    try {
+      const comment = await commentService.updateComment(
+        req.params.commentId,
+        req.body,
+      );
 
-    res.status(200).json(comment);
+      res.json({
+        message: "Comment updated successfully.",
+        data: {
+          comment,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async deleteComment(req, res) {
-    await commentService.deleteComment(req.params.commentId);
+  async deleteComment(req, res, next) {
+    try {
+      await commentService.deleteComment(req.params.commentId);
 
-    res.status(204).send();
+      res.json({
+        message: "Comment deleted successfully.",
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 }
 

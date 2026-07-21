@@ -37,6 +37,10 @@ class UserRepository {
   async exists(filter) {
     return await User.exists(filter);
   }
+
+  async findByGoogleId(googleId) {
+    return await User.findOne({ googleId });
+  }
 }
 
 export default new UserRepository();

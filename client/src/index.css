@@ -1,1 +1,34 @@
 @import "tailwindcss";
+
+@theme {
+  /* Architectural Surface Layout (Zinc Matrix Spectrum) */
+  --color-app-bg: #09090b;
+  --color-app-surface: #18181b;
+  --color-app-border: #27272a;
+
+  /* Identity & Interaction Accent */
+  --color-brand-primary: #818cf8;
+  --color-brand-hover: #6366f1;
+  --color-brand-light: #1e1b4b;
+
+  /* Typography Hierarchy */
+  --color-content-primary: #f4f4f5;
+  --color-content-secondary: #a1a1aa;
+  --color-content-muted: #52525b;
+
+  /* ─── THE TRANSFORMATION: COMPLETE SOFT ROUNDNESS ─── */
+  --radius-app-lg: 24px; /* For main cards, modals, and content wrapper boxes */
+  --radius-app-md: 32px; /* Pill/Capsule geometry for buttons, nav inputs, links, list elements */
+  --radius-app-sm: 12px; /* For compact tags or nested component corners */
+}
+
+@layer base {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    @apply bg-app-bg text-content-primary antialiased selection:bg-brand-hover selection:text-white;
+  }
+}
