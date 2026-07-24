@@ -1,1 +1,1 @@
-export * from "./useCommentComposer";
+export * from "./useCommentComposer.js";

@@ -2,16 +2,19 @@ import { useComments } from "../../hooks";
 
 export function useCommentListController({ postId }) {
   const query = useComments(postId);
-  console.log(query);
+
+  const comments = query.data?.comments ?? [];
+
   return {
     data: {
-      comments: query.data?.comments ?? [],
+      comments,
+      postId,
     },
 
     ui: {
       isPending: query.isPending,
       isError: query.isError,
-      isEmpty: !query.isPending && (query.data?.length ?? 0) === 0,
+      isEmpty: !query.isPending && comments.length === 0,
     },
 
     actions: {

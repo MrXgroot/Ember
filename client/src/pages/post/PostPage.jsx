@@ -5,20 +5,17 @@ import { useParams } from "react-router-dom";
 import { PostDetails, usePostDetailsController } from "@/features/post";
 import {
   CommentComposer,
-  useCommentComposer,
+  useCommentComposerController,
 } from "@/features/comment/CommentComposer";
 import {
   CommentList,
   useCommentListController,
 } from "@/features/comment/CommentList";
-// import { CommentComposer } from "@/features/comment/CommentComposer";
-// import { CommentList } from "@/features/comment/CommentList";
 
 export function PostPage() {
   const { postId } = useParams();
-  console.log(postId);
   const postDetailsController = usePostDetailsController({ postId });
-  const composerController = useCommentComposer({ postId });
+  const composerController = useCommentComposerController({ postId });
   const commentListController = useCommentListController({ postId });
   return (
     <PageLayout>

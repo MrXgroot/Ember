@@ -1,35 +1,50 @@
-// modules/community/community.service.js
-
 import communityRepository from "./community.repository.js";
+import CommunityQuery from "./community.query.js";
+
+export const COMMUNITY_POPULATE = [
+  {
+    path: "user",
+    select: "username displayName avatar",
+  },
+];
 
 class CommunityService {
   async createCommunity(communityData) {
-    return await communityRepository.create(communityData);
+    return communityRepository.create(communityData);
   }
 
-  async getCommunities(query = {}) {
-    const filters = {};
-    const options = {};
+  async getCommunity(request = {}) {
+    const query = CommunityQuery.from(request);
 
-    // We'll build these as features are added.
-    // search
-    // pagination
-    // sorting
-    // filtering
-
-    return await communityRepository.findMany(filters, options);
+    return communityRepository.findOne(query.filters, {
+      ...query.options,
+      populate: COMMUNITY_POPULATE,
+    });
   }
 
-  async getCommunity(id) {
-    return await communityRepository.findById(id);
+  async getCommunities(request = {}) {
+    const query = CommunityQuery.from(request);
+
+    return communityRepository.findMany(query.filters, {
+      ...query.options,
+      populate: COMMUNITY_POPULATE,
+    });
   }
 
   async updateCommunity(id, communityData) {
-    return await communityRepository.updateById(id, communityData);
+    return communityRepository.updateById(id, communityData);
   }
 
   async deleteCommunity(id) {
-    return await communityRepository.deleteById(id);
+    return communityRepository.deleteById(id);
+  }
+
+  async joinCommunity({ communityId, userId }) {
+    // TODO
+  }
+
+  async leaveCommunity({ communityId, userId }) {
+    // TODO
   }
 }
 

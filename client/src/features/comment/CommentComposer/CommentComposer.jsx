@@ -3,13 +3,7 @@ import { cn } from "@/shared/integrations/cn";
 import { Avatar, Textarea, Button } from "@/shared/ui";
 
 export function CommentComposer({ controller, className }) {
-  const {
-    content = "",
-    setContent = () => {},
-    canSubmit = false,
-    loading = false,
-    submit = () => {},
-  } = controller ?? {};
+  const { data, ui, actions } = controller;
 
   return (
     <div className={cn("flex items-start gap-4", className)}>
@@ -18,24 +12,16 @@ export function CommentComposer({ controller, className }) {
       <div className="flex flex-1 flex-col">
         <Textarea
           placeholder="Join the discussion..."
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
+          value={data.content}
+          onChange={(e) => actions.setContent(e.target.value)}
           rows={3}
-          // className={cn(
-          //   "min-h-[88px] w-full resize-none",
-          //   "bg-transparent",
-          //   "text-sm leading-relaxed",
-          //   "text-content-primary",
-          //   "placeholder:text-content-muted",
-          //   "focus:outline-none",
-          // )}
         />
 
         <div className="mt-4 flex items-center justify-end">
           <Button
-            disabled={!canSubmit}
-            loading={loading}
-            onClick={submit}
+            disabled={!ui.canSubmit}
+            loading={ui.loading}
+            onClick={actions.submit}
             className={cn(
               "h-9 rounded-app-sm px-5",
               "text-sm font-semibold",
