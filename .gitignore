@@ -28,3 +28,4 @@ server/src/migrate.js
 test/
 server/scripts/
 .env
+**/.env
