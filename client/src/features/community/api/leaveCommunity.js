@@ -1,5 +1,4 @@
-import axios from "@/shared/lib/axios";
-
+import axios from "@/shared/integrations/api";
 export async function leaveCommunity(communityId) {
   const response = await axios.post(`/communities/${communityId}/leave`);
 

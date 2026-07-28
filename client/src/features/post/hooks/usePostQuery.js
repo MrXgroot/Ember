@@ -3,12 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { getPosts } from "../api";
 import { postKeys } from "../queryKeys";
 
-export function usePostsQuery(filters = {}, options = {}, config = {}) {
+export function usePostsQuery(request = {}, queryOptions = {}) {
   return useQuery({
-    queryKey: postKeys.list(filters, options),
+    queryKey: postKeys.list(request),
 
-    queryFn: () => getPosts(filters, options),
+    queryFn: () => getPosts(request),
 
-    ...config,
+    ...queryOptions,
   });
 }

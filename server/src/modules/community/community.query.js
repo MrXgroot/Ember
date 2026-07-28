@@ -1,11 +1,8 @@
 // community.query.js
 
 class CommunityQuery {
-  constructor(filters = {}, options = {}) {
-    this.input = {
-      filters,
-      options,
-    };
+  constructor(request = {}) {
+    this.input = request;
 
     this.query = {
       filters: {},
@@ -13,8 +10,8 @@ class CommunityQuery {
     };
   }
 
-  static from(filters = {}, options = {}) {
-    return new CommunityQuery(filters, options).build();
+  static from(request = {}) {
+    return new CommunityQuery(request).build();
   }
 
   build() {
@@ -25,7 +22,12 @@ class CommunityQuery {
   }
 
   buildFilters() {
-    const { filters } = this.input;
+    const { filters = {} } = this.input;
+
+    // Slug
+    if (filters.slug) {
+      this.query.filters.slug = filters.slug;
+    }
 
     // Search
     if (filters.search) {
@@ -45,34 +47,25 @@ class CommunityQuery {
       ];
     }
 
-    // Owner
-    if (filters.owner) {
-      this.query.filters.owner = filters.owner;
-    }
-
     // Member
     if (filters.member) {
       this.query.filters.members = filters.member;
     }
 
-    // Visibility
-    if (filters.visibility) {
-      this.query.filters.visibility = filters.visibility;
-    }
-
-    // Tags
-    if (filters.tag) {
-      this.query.filters.tags = {
-        $in: Array.isArray(filters.tag) ? filters.tag : [filters.tag],
-      };
+    // Owner
+    if (filters.owner) {
+      this.query.filters.owner = filters.owner;
     }
   }
 
   buildOptions() {
-    const { options } = this.input;
+    const { options = {} } = this.input;
 
-    this.query.options.page = options.page ?? 1;
-    this.query.options.limit = options.limit ?? 20;
+    const page = Number(options.page ?? 1);
+    const limit = Number(options.limit ?? 20);
+
+    this.query.options.skip = (page - 1) * limit;
+    this.query.options.limit = limit;
 
     switch (options.sort) {
       case "popular":
@@ -82,11 +75,6 @@ class CommunityQuery {
         break;
 
       case "new":
-        this.query.options.sort = {
-          createdAt: -1,
-        };
-        break;
-
       default:
         this.query.options.sort = {
           createdAt: -1,

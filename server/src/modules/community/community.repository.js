@@ -2,32 +2,56 @@
 
 import Community from "./community.model.js";
 
+const UPDATE_OPTIONS = {
+  returnDocument: "after",
+  runValidators: true,
+};
+
 class CommunityRepository {
   async create(communityData) {
     return await Community.create(communityData);
   }
 
-  async findById(id) {
-    return await Community.findById(id);
+  async findById(communityId, options = {}) {
+    let query = Community.findById(communityId);
+
+    for (const populate of options.populate ?? []) {
+      query = query.populate(populate);
+    }
+
+    return await query;
   }
 
-  async findOne(filter) {
-    return await Community.findOne(filter);
+  async findOne(filter = {}, options = {}) {
+    let query = Community.findOne(filter);
+
+    for (const populate of options.populate ?? []) {
+      query = query.populate(populate);
+    }
+
+    return await query;
   }
 
   async findMany(filter = {}, options = {}) {
-    return await Community.find(filter, null, options);
+    const { populate, ...queryOptions } = options;
+
+    let query = Community.find(filter, null, queryOptions);
+
+    for (const item of populate ?? []) {
+      query = query.populate(item);
+    }
+    return await query;
   }
 
-  async updateById(id, communityData) {
-    return await Community.findByIdAndUpdate(id, communityData, {
-      new: true,
-      runValidators: true,
+  async updateById(communityId, updateData, options = {}) {
+    return await Community.findByIdAndUpdate(communityId, updateData, {
+      ...UPDATE_OPTIONS,
+      ...options,
     });
   }
 
-  async deleteById(id) {
-    return await Community.findByIdAndDelete(id);
+  async deleteById(communityId) {
+    return await Community.findByIdAndDelete(communityId);
   }
 
   async count(filter = {}) {
@@ -36,6 +60,36 @@ class CommunityRepository {
 
   async exists(filter) {
     return await Community.exists(filter);
+  }
+
+  async joinCommunity(communityId, userId) {
+    return await Community.findByIdAndUpdate(
+      communityId,
+      {
+        $addToSet: {
+          members: userId,
+        },
+        $inc: {
+          membersCount: 1,
+        },
+      },
+      UPDATE_OPTIONS,
+    );
+  }
+
+  async leaveCommunity(communityId, userId) {
+    return await Community.findByIdAndUpdate(
+      communityId,
+      {
+        $pull: {
+          members: userId,
+        },
+        $inc: {
+          membersCount: -1,
+        },
+      },
+      UPDATE_OPTIONS,
+    );
   }
 }
 

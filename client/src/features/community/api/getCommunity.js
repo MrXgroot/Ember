@@ -1,5 +1,4 @@
-import axios from "@/shared/lib/axios";
-
+import axios from "@/shared/integrations/api";
 export async function getCommunity(slug) {
   const response = await axios.get(`/communities/${slug}`);
 

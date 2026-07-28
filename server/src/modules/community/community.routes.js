@@ -1,18 +1,31 @@
 // modules/community/community.routes.js
 
 import { Router } from "express";
-import communityController from "./community.controller.js";
+import authenticate from "../auth/auth.middleware.js";
+import {
+  createCommunity,
+  deleteCommunity,
+  getCommunities,
+  getCommunity,
+  joinCommunity,
+  leaveCommunity,
+  updateCommunity,
+} from "./community.controller.js";
 
 const router = Router();
 
-router.post("/", communityController.createCommunity);
+router.post("/", authenticate, createCommunity);
 
-router.get("/", communityController.getCommunities);
+router.get("/", getCommunities);
 
-router.get("/:communityId", communityController.getCommunity);
+router.post("/:communityId/join", authenticate, joinCommunity);
 
-router.patch("/:communityId", communityController.updateCommunity);
+router.post("/:communityId/leave", authenticate, leaveCommunity);
 
-router.delete("/:communityId", communityController.deleteCommunity);
+router.get("/:slug", getCommunity);
+
+router.patch("/:communityId", updateCommunity);
+
+router.delete("/:communityId", deleteCommunity);
 
 export default router;

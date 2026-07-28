@@ -11,6 +11,14 @@ const communitySchema = new mongoose.Schema(
       maxlength: 50,
     },
 
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+    },
+
     description: {
       type: String,
       default: "",
@@ -28,10 +36,24 @@ const communitySchema = new mongoose.Schema(
       default: "",
     },
 
-    user: {
+    owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      default: null,
+      required: true,
+      index: 1,
+    },
+
+    members: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
+    membersCount: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
   },
   {

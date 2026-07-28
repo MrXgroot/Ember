@@ -1,7 +1,7 @@
 import { usePostsQuery, useVote } from "../../hooks";
 
-export function useFeed() {
-  const query = usePostsQuery();
+export function useFeed(request = {}) {
+  const query = usePostsQuery(request);
   const vote = useVote();
   return {
     data: {

@@ -1,6 +1,11 @@
-import axios from "@/shared/lib/axios";
+import axios from "@/shared/integrations/api";
 
-export async function getCommunities(params = {}) {
+export async function getCommunities({ filters = {}, options = {} } = {}) {
+  const params = {
+    ...filters,
+    ...options,
+  };
+
   const response = await axios.get("/communities", {
     params,
   });

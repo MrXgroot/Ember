@@ -1,0 +1,1 @@
+export { PopularPage } from "./PopularPage";

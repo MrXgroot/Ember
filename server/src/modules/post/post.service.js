@@ -1,8 +1,7 @@
-// services/post.service.js
-
 import postRepository from "./post.repository.js";
+import PostQuery from "./post.query.js";
 
-const POST_POPULATE = [
+export const POST_POPULATE = [
   {
     path: "user",
     select: "displayName username avatar",
@@ -14,29 +13,29 @@ const POST_POPULATE = [
 ];
 
 class PostService {
-  async createPost(postData) {
+  async createPost({ postData }) {
     return await postRepository.create(postData);
   }
+  async getPosts(request = {}) {
+    const query = await PostQuery.from(request);
 
-  async getPosts(filters = {}, options = {}) {
-    return await postRepository.findMany(filters, {
-      ...options,
+    return await postRepository.findMany(query.filters, {
+      ...query.options,
       populate: POST_POPULATE,
     });
   }
 
-  async getPost(postId, options = {}) {
+  async getPost({ postId }) {
     return await postRepository.findById(postId, {
-      ...options,
       populate: POST_POPULATE,
     });
   }
 
-  async updatePost(postId, updateData) {
-    return await postRepository.updateById(postId, updateData);
+  async updatePost({ postId, postData }) {
+    return await postRepository.updateById(postId, postData);
   }
 
-  async deletePost(postId) {
+  async deletePost({ postId }) {
     return await postRepository.deleteById(postId);
   }
 }

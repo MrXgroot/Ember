@@ -2,7 +2,10 @@ import communityService from "./community.service.js";
 
 export async function createCommunity(req, res, next) {
   try {
-    const community = await communityService.createCommunity(req.body);
+    const community = await communityService.createCommunity({
+      communityData: req.body,
+      userId: req.user.id,
+    });
 
     res.status(201).json({
       message: "Community created successfully.",
@@ -36,11 +39,19 @@ export async function getCommunity(req, res, next) {
 
 export async function getCommunities(req, res, next) {
   try {
+    const { search, owner, member, page, limit, sort } = req.query;
     const communities = await communityService.getCommunities({
-      filters: req.query,
-      options: req.query,
+      filters: {
+        search,
+        owner,
+        member,
+      },
+      options: {
+        page,
+        limit,
+        sort,
+      },
     });
-
     res.json({
       message: "Communities fetched successfully.",
       data: {
@@ -54,10 +65,11 @@ export async function getCommunities(req, res, next) {
 
 export async function updateCommunity(req, res, next) {
   try {
-    const community = await communityService.updateCommunity(
-      req.params.communityId,
-      req.body,
-    );
+    const community = await communityService.updateCommunity({
+      communityId: req.params.communityId,
+      communityData: req.body,
+      userId: req.user.id,
+    });
 
     res.json({
       message: "Community updated successfully.",
@@ -72,7 +84,10 @@ export async function updateCommunity(req, res, next) {
 
 export async function deleteCommunity(req, res, next) {
   try {
-    await communityService.deleteCommunity(req.params.communityId);
+    await communityService.deleteCommunity({
+      communityId: req.params.communityId,
+      userId: req.user.id,
+    });
 
     res.json({
       message: "Community deleted successfully.",

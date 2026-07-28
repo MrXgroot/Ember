@@ -1,12 +1,12 @@
 import api from "@/shared/integrations/api";
-
-export async function getPosts(filters = {}, options = {}) {
+export async function getPosts(request = {}) {
+  const { filters = {}, options = {} } = request;
+  console.log(request, "is");
   const response = await api.get("/posts", {
     params: {
       ...filters,
       ...options,
     },
   });
-  console.log(response.data);
   return response.data;
 }
