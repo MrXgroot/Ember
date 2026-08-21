@@ -1,7 +1,7 @@
 import React from "react";
 import { Bell, MessageSquare, Plus } from "lucide-react";
 import { cn } from "@/shared/integrations/cn";
-
+import { Link } from "react-router-dom";
 export function Actions({ onCreate, className }) {
   // Common style scale for our standalone navigation button targets
   const iconButtonClass = cn(
@@ -12,16 +12,20 @@ export function Actions({ onCreate, className }) {
   return (
     <div className={cn("flex items-center gap-1.5", className)}>
       {/* Chat Messages */}
-      <button className={iconButtonClass} aria-label="Messages">
+      <Link to="/messages" className={iconButtonClass} aria-label="Messages">
         <MessageSquare className="w-[18px] h-[18px]" />
-      </button>
+      </Link>
 
       {/* Notifications Track */}
-      <button className={iconButtonClass} aria-label="Notifications">
+      <Link
+        to="/notifications"
+        className={iconButtonClass}
+        aria-label="Notifications"
+      >
         <Bell className="w-[18px] h-[18px]" />
         {/* Glowing Indicator Counter Dot */}
         <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-brand-primary ring-2 ring-app-surface" />
-      </button>
+      </Link>
 
       {/* High-Contrast Action Create Button Element */}
       <button
