@@ -5,10 +5,10 @@ export async function getCommunities({ filters = {}, options = {} } = {}) {
     ...filters,
     ...options,
   };
+  console.log("calling");
 
   const response = await axios.get("/communities", {
     params,
   });
-
   return response.data.data.communities;
 }

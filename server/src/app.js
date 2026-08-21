@@ -4,7 +4,6 @@ import cors from "cors";
 import routes from "./routes/index.js";
 
 const app = express();
-
 // Middlewares
 app.use(
   cors({
