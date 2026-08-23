@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       unique: true,
+      sparse: true,
       trim: true,
       lowercase: true,
       minlength: 3,
@@ -54,10 +55,14 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    lastOnlineAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
   },
 );
 
-export default mongoose.model("User", userSchema);
+export const User = mongoose.model("User", userSchema);

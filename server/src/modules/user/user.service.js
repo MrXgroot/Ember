@@ -1,38 +1,42 @@
-// modules/user/user.service.js
-
 import userRepository from "./user.repository.js";
+import UserQuery from "./user.query.js";
 
-class UserService {
-  async createUser(userData) {
-    return await userRepository.create(userData);
-  }
+import { isUserOnline } from "../../infrastructure/socket/socket.presence.js";
 
-  async getUsers(query = {}) {
-    const filters = {};
-    const options = {};
-
-    if (query.username) {
-      filters.username = query.username;
-    }
-
-    if (query.displayName) {
-      filters.displayName = query.displayName;
-    }
-
-    return await userRepository.findMany(filters, options);
-  }
-
-  async getUser(userId) {
-    return await userRepository.findById(userId);
-  }
-
-  async updateUser(userId, userData) {
-    return await userRepository.updateById(userId, userData);
-  }
-
-  async deleteUser(userId) {
-    return await userRepository.deleteById(userId);
-  }
+export async function createUser(userData) {
+  return userRepository.createUser(userData);
 }
 
-export default new UserService();
+export async function getUsers(request = {}) {
+  const query = await UserQuery.from(request);
+
+  const users = await userRepository.findUsers(query.filters, query.options);
+
+  return users.map((user) => ({
+    ...user.toObject(),
+    isOnline: isUserOnline(user._id.toString()),
+  }));
+}
+
+export async function getUser(userId) {
+  const user = await userRepository.findUserById(userId, {
+    select: "displayName username avatar bio banner lastOnlineAt",
+  });
+
+  if (!user) {
+    return null;
+  }
+
+  return {
+    ...user.toObject(),
+    isOnline: isUserOnline(user._id.toString()),
+  };
+}
+
+export async function updateUser(userId, userData) {
+  return userRepository.updateUserById(userId, userData);
+}
+
+export async function deleteUser(userId) {
+  return userRepository.deleteUserById(userId);
+}

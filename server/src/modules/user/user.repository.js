@@ -1,45 +1,66 @@
 // modules/user/user.repository.js
 
-import User from "./user.model.js";
+import { User } from "./user.model.js";
 
 class UserRepository {
-  async create(userData) {
+  async createUser(userData) {
     return await User.create(userData);
   }
 
-  async findById(userId) {
-    return await User.findById(userId);
+  async findUserById(userId, options = {}) {
+    let query = User.findById(userId);
+
+    if (options.select) {
+      query = query.select(options.select);
+    }
+
+    return await query;
   }
 
-  async findOne(filter) {
-    return await User.findOne(filter);
+  async findUser(filter = {}, options = {}) {
+    let query = User.findOne(filter);
+
+    if (options.select) {
+      query = query.select(options.select);
+    }
+
+    return await query;
   }
 
-  async findMany(filter = {}, options = {}) {
-    return await User.find(filter, null, options);
-  }
+  async findUsers(filter = {}, options = {}) {
+    const { select, sort = { createdAt: -1 }, skip = 0, limit = 20 } = options;
 
-  async updateById(userId, updateData) {
-    return await User.findByIdAndUpdate(userId, updateData, {
-      new: true,
-      runValidators: true,
-    });
-  }
+    let query = User.find(filter);
 
-  async deleteById(userId) {
-    return await User.findByIdAndDelete(userId);
-  }
+    if (select) {
+      query = query.select(select);
+    }
 
-  async count(filter = {}) {
-    return await User.countDocuments(filter);
-  }
-
-  async exists(filter) {
-    return await User.exists(filter);
+    return await query.sort(sort).skip(skip).limit(limit);
   }
 
   async findByGoogleId(googleId) {
     return await User.findOne({ googleId });
+  }
+
+  async updateUserById(userId, updateData, options = {}) {
+    return await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+      runValidators: true,
+      ...options,
+    });
+  }
+
+  async deleteUserById(userId) {
+    return await User.findByIdAndDelete(userId);
+  }
+
+  async countUsers(filter = {}) {
+    return await User.countDocuments(filter);
+  }
+
+  async userExists(filter = {}) {
+    return await User.exists(filter);
   }
 }
 
