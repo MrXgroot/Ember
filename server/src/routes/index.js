@@ -7,6 +7,7 @@ import communityRoutes from "../modules/community/community.routes.js";
 import commentRoutes from "../modules/comment/comment.routes.js";
 import replyRoutes from "../modules/reply/reply.routes.js";
 import uploadRoutes from "../modules/upload/upload.routes.js";
+import messageRoutes from "../modules/message/message.routes.js";
 const router = Router();
 
 router.use("/auth", authRoutes);
@@ -16,4 +17,5 @@ router.use("/communities", communityRoutes);
 router.use("/comments", commentRoutes);
 router.use("/replies", replyRoutes);
 router.use("/upload", uploadRoutes);
+router.use("/messages", messageRoutes);
 export default router;
