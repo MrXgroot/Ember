@@ -1,5 +1,5 @@
 import { Message } from "./message.model.js";
-
+import mongoose from "mongoose";
 export async function createMessage(data) {
   return Message.create(data);
 }
@@ -33,7 +33,10 @@ export async function getMessages({ userId, otherUserId, limit = 30, before }) {
 }
 
 export async function findById(messageId) {
-  return Message.findById(messageId);
+  return Message.findById(messageId)
+    .populate("sender", "displayName username avatar")
+    .populate("receiver", "displayName username avatar")
+    .lean();
 }
 
 export async function deleteMessage(messageId) {
@@ -41,26 +44,25 @@ export async function deleteMessage(messageId) {
 }
 
 export async function getInbox(userId) {
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
   return Message.aggregate([
-    // Messages where the current user is either sender or receiver
     {
       $match: {
-        $or: [{ sender: userId }, { receiver: userId }],
+        $or: [{ sender: userObjectId }, { receiver: userObjectId }],
       },
     },
 
-    // Newest messages first
     {
       $sort: {
         createdAt: -1,
       },
     },
 
-    // Group by the OTHER person
     {
       $group: {
         _id: {
-          $cond: [{ $eq: ["$sender", userId] }, "$receiver", "$sender"],
+          $cond: [{ $eq: ["$sender", userObjectId] }, "$receiver", "$sender"],
         },
 
         lastMessage: {
@@ -69,14 +71,12 @@ export async function getInbox(userId) {
       },
     },
 
-    // Newest conversations first
     {
       $sort: {
         "lastMessage.createdAt": -1,
       },
     },
 
-    // Get the other user's information
     {
       $lookup: {
         from: "users",

@@ -4,7 +4,6 @@ export async function getMessages(req, res) {
   try {
     const { otherUserId } = req.params;
     const { limit, before } = req.query;
-
     const messages = await messageService.getMessages({
       userId: req.user.id,
       otherUserId,
