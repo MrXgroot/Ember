@@ -40,3 +40,7 @@ export async function updateUser(userId, userData) {
 export async function deleteUser(userId) {
   return userRepository.deleteUserById(userId);
 }
+
+export async function getUserByGoogleId(googleId) {
+  return userRepository.findByGoogleId(googleId);
+}

@@ -1,8 +1,7 @@
 import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 
-import userRepository from "../user/user.repository.js";
-
+import * as userService from "../user/user.service.js";
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 async function googleLogin({ credential }) {
@@ -15,9 +14,9 @@ async function googleLogin({ credential }) {
 
   const googleId = payload.sub;
 
-  let user = await userRepository.findByGoogleId(googleId);
+  let user = await userService.getUserByGoogleId(googleId);
   if (!user) {
-    user = await userRepository.create({
+    user = await userService.createUser({
       googleId,
       username: payload?.name,
       email: payload.email,
@@ -44,7 +43,7 @@ async function googleLogin({ credential }) {
 }
 
 async function getCurrentUser(userId) {
-  return userRepository.findById(userId);
+  return userService.getUser(userId);
 }
 
 export default {
