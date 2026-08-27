@@ -16,10 +16,10 @@ async function googleLogin({ credential }) {
   const googleId = payload.sub;
 
   let user = await userRepository.findByGoogleId(googleId);
-
   if (!user) {
     user = await userRepository.create({
       googleId,
+      username: payload?.name,
       email: payload.email,
       displayName: payload.name,
       avatar: payload.picture,
