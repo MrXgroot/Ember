@@ -1,5 +1,5 @@
+import React from "react";
 import { Menu } from "lucide-react";
-
 import { cn } from "@/shared/integrations/cn";
 
 export function Hamburger({ className, onClick }) {
@@ -7,21 +7,13 @@ export function Hamburger({ className, onClick }) {
     <button
       type="button"
       onClick={onClick}
+      aria-label="Toggle menu"
       className={cn(
-        "flex items-center justify-center",
-
-        "size-10 rounded-lg",
-
-        "hover:bg-app-hover",
-
-        "transition-colors",
-
-        "focus:outline-none",
-
+        "flex items-center justify-center size-8 sm:size-9 rounded-app-md text-content-secondary hover:text-content-primary hover:bg-app-bg transition-colors",
         className,
       )}
     >
-      <Menu className="size-5" />
+      <Menu className="w-5 h-5" />
     </button>
   );
 }
