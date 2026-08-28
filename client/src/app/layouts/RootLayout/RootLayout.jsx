@@ -31,7 +31,7 @@ function RootLayout({ className }) {
       <AnimatePresence>
         {drawer.isOpen && (
           <Drawer className="block xl:hidden" onClose={drawer.close}>
-            <Sidebar />
+            <Sidebar className="pt-8" />
           </Drawer>
         )}
       </AnimatePresence>
