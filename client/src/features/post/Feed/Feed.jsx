@@ -1,26 +1,48 @@
+import { usePostsQuery, useVote } from "../hooks";
 import { LoadingState, ErrorState, EmptyState, PostList } from "./ui";
-import { PostCard } from "../PostCard";
-export function Feed({ controller }) {
-  if (controller.ui.showLoader) {
+// import { PostCard } from "../PostCard";
+import { PostCard } from "./ui/PostCard";
+
+export function Feed({ filters, options }) {
+  const postsQuery = usePostsQuery({
+    filters,
+    options,
+  });
+
+  const vote = useVote();
+
+  const posts = postsQuery.data ?? [];
+  console.log(posts);
+  if (postsQuery.isLoading) {
     return <LoadingState />;
   }
 
-  if (controller.ui.showError) {
-    return <ErrorState error={controller.state.error} />;
+  if (postsQuery.isError) {
+    return <ErrorState error={postsQuery.error} />;
   }
 
-  if (controller.ui.showEmpty) {
+  if (!posts.length) {
     return <EmptyState />;
   }
 
   return (
     <PostList>
-      {controller.data.posts.map((post) => (
+      {posts.map((post) => (
         <PostCard
           key={post._id}
           post={post}
-          onUpvote={() => controller.actions.upvote(post._id)}
-          onDownvote={() => controller.actions.downvote(post._id)}
+          onUpvote={() =>
+            vote.mutate({
+              postId: post._id,
+              type: "upvote",
+            })
+          }
+          onDownvote={() =>
+            vote.mutate({
+              postId: post._id,
+              type: "downvote",
+            })
+          }
         />
       ))}
     </PostList>
