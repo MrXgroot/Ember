@@ -31,7 +31,6 @@ export function Sidebar({ className }) {
   );
   const auth = useAuthGuard();
   const modal = useModal();
-  console.log("[SIDEBAR]", communities);
 
   return (
     <aside
