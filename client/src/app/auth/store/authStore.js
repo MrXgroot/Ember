@@ -53,6 +53,7 @@ export const useAuthStore = create((set, get) => ({
       isAuthenticated: true,
       activeAccountId: account.id,
     });
+    window.location.reload();
   },
 
   removeAccount(accountId) {

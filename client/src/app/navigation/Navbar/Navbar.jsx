@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Search as SearchIcon, X } from "lucide-react";
 import { Brand } from "./ui/Brand";
 import { Search } from "./ui/Search";
@@ -10,7 +9,7 @@ import { cn } from "@/shared/integrations/cn";
 import { useModal } from "@/app/modal";
 import { useAuthGuard } from "@/app/auth";
 
-export function Navbar({ className, onToggle, onUserMenuClick }) {
+export function Navbar({ className, onToggle }) {
   const [isSearching, setIsSearching] = useState(false);
   const searchInputRef = useRef(null);
   const { open } = useModal();
@@ -29,7 +28,8 @@ export function Navbar({ className, onToggle, onUserMenuClick }) {
     <header
       className={cn(
         "sticky top-0 z-40 w-full h-14 bg-app-surface border-b border-app-border",
-        "flex items-center justify-between px-2.5 sm:px-4 shrink-0 overflow-hidden",
+        // Removed overflow-hidden so the dropdown can visually escape the header
+        "flex items-center justify-between px-2.5 sm:px-4 shrink-0",
         className,
       )}
     >
@@ -39,7 +39,7 @@ export function Navbar({ className, onToggle, onUserMenuClick }) {
         <Brand />
       </div>
 
-      {/* 2. CENTER ZONE: Smooth Expandable Search */}
+      {/* 2. CENTER ZONE: Expandable Search */}
       <div
         className={cn(
           "flex items-center transition-all duration-200 ease-out",
@@ -56,7 +56,7 @@ export function Navbar({ className, onToggle, onUserMenuClick }) {
               type="button"
               onClick={handleStopSearch}
               aria-label="Cancel search"
-              className="absolute right-2 p-1 text-content-muted hover:text-content-primary md:hidden"
+              className="absolute right-2 p-1 text-content-muted hover:text-content-primary md:hidden cursor-pointer"
             >
               <X className="size-4" />
             </button>
@@ -77,13 +77,13 @@ export function Navbar({ className, onToggle, onUserMenuClick }) {
             type="button"
             onClick={handleStartSearch}
             aria-label="Open search"
-            className="flex md:hidden items-center justify-center size-8 rounded-app-md text-content-secondary hover:text-content-primary hover:bg-app-bg"
+            className="flex md:hidden items-center justify-center size-8 rounded-app-md text-content-secondary hover:text-content-primary hover:bg-app-bg cursor-pointer"
           >
             <SearchIcon className="size-4" />
           </button>
         )}
 
-        {/* Action icons (+ hides when isSearching is true) */}
+        {/* Actions */}
         <Actions
           isSearching={isSearching}
           onCreate={() => auth.require(() => open("createPost"))}
@@ -91,7 +91,8 @@ export function Navbar({ className, onToggle, onUserMenuClick }) {
 
         <div className="h-4 w-px bg-app-border mx-0.5" />
 
-        <UserMenu isSearching={isSearching} onClick={onUserMenuClick} />
+        {/* User Menu with Dropdown */}
+        <UserMenu isSearching={isSearching} />
       </div>
     </header>
   );
