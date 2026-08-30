@@ -6,7 +6,7 @@ import { CommunityPage } from "@/pages/community/CommunityPage";
 
 import { PopularPage } from "@/pages/popular";
 
-import { ExploreCommunitiesPage } from "@/pages/explore";
+import { ExploreCommunitiesPage } from "@/pages/explore/communities";
 import { ExploreUsersPage } from "@/pages/explore/users";
 
 import { SearchPage } from "@/pages/search";
@@ -23,7 +23,7 @@ function PublicRoutes() {
       <Route path="/popular" element={<PopularPage />} />
 
       {/* ==================== POSTS ==================== */}
-      <Route path="/posts/:postId" element={<PostPage />} />
+      <Route path="/post/:postId" element={<PostPage />} />
 
       {/* ==================== COMMUNITIES ==================== */}
       <Route path="/c/:communityId" element={<CommunityPage />} />
