@@ -1,11 +1,10 @@
 import { useEffect } from "react";
 import { socket } from "@/shared/integrations/socket/socket";
-import { getToken } from "@/app/auth";
-
+import { useAuth } from "../auth";
 export function SocketProvider({ children }) {
+  const { token } = useAuth();
+  console.log(token);
   useEffect(() => {
-    const token = getToken();
-
     if (!token) {
       return;
     }

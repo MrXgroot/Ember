@@ -6,7 +6,7 @@ export function useExploreCommunitiesController() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("all");
   const [page, setPage] = useState(1);
-  console.log(searchQuery);
+
   // Build request
   const request = useMemo(
     () => ({

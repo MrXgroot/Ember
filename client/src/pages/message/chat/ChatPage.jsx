@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { AlertCircle } from "lucide-react";
-
-import { useAuthStore } from "@/app/auth/store";
+import { useAuth } from "@/app/auth";
 import { useMessages } from "@/features/message/hooks/useMessages";
 import { useMessageSocket } from "@/features/message/hooks/useMessageSocket";
 import { cn } from "@/shared/integrations/cn";
@@ -13,9 +12,7 @@ import { MessageBar } from "./ui/MessageBar";
 
 export function ChatPage({ className }) {
   const { userId } = useParams();
-
-  const currentUser = useAuthStore((state) => state.user);
-
+  const { user: currentUser } = useAuth();
   const [text, setText] = useState("");
   const scrollRef = useRef(null);
 

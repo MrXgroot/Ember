@@ -1,10 +1,9 @@
 import React from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/shared/integrations/cn";
-import { useAuthStore } from "@/app/auth/store";
-
+import { useAuth } from "@/app/auth";
 export function UserMenu({ isSearching = false, className, onClick }) {
-  const user = useAuthStore((state) => state.user);
+  const { user } = useAuth();
 
   const displayName = user?.displayName || user?.username || "Guest";
   const avatar = user?.avatar;
