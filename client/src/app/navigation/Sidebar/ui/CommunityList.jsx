@@ -121,7 +121,7 @@ export const CommunityList = ({
             <CommunityItem
               key={community._id || community.id || community.name}
               name={community.name}
-              to={community.href || `/c/${community.name}`}
+              to={community.href || `/c/${community.slug}`}
             />
           ))}
       </div>

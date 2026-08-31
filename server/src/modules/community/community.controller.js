@@ -22,10 +22,9 @@ export async function getCommunity(req, res, next) {
   try {
     const community = await communityService.getCommunity({
       filters: {
-        slug: req.params.slug,
+        communityId: req.params.slug,
       },
     });
-
     res.json({
       message: "Community fetched successfully.",
       data: {

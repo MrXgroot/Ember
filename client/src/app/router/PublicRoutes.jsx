@@ -26,7 +26,7 @@ function PublicRoutes() {
       <Route path="/post/:postId" element={<PostPage />} />
 
       {/* ==================== COMMUNITIES ==================== */}
-      <Route path="/c/:communityId" element={<CommunityPage />} />
+      <Route path="/c/:slug" element={<CommunityPage />} />
 
       {/* ==================== EXPLORE ==================== */}
       <Route path="/communities" element={<ExploreCommunitiesPage />} />
