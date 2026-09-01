@@ -2,6 +2,7 @@ import postService from "./post.service.js";
 
 class PostController {
   async createPost(req, res) {
+    console.log(req.body);
     const post = await postService.createPost({
       postData: {
         ...req.body,

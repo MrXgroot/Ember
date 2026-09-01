@@ -15,6 +15,8 @@ import { SettingsPage } from "@/pages/settings";
 
 import { InboxPage } from "@/pages/message/inbox";
 import { ChatPage } from "@/pages/message/chat";
+
+import { CreatePostPage } from "@/pages/post/create";
 function PublicRoutes() {
   return (
     <Routes>
@@ -24,7 +26,7 @@ function PublicRoutes() {
 
       {/* ==================== POSTS ==================== */}
       <Route path="/post/:postId" element={<PostPage />} />
-
+      <Route path="/post/create" element={<CreatePostPage />} />
       {/* ==================== COMMUNITIES ==================== */}
       <Route path="/c/:slug" element={<CommunityPage />} />
 
