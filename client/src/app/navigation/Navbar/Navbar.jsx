@@ -84,10 +84,7 @@ export function Navbar({ className, onToggle }) {
         )}
 
         {/* Actions */}
-        <Actions
-          isSearching={isSearching}
-          onCreate={() => auth.require(() => open("createPost"))}
-        />
+        <Actions isSearching={isSearching} />
 
         <div className="h-4 w-px bg-app-border mx-0.5" />
 

@@ -3,13 +3,12 @@ import { Bell, MessageSquare, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/shared/integrations/cn";
 
-export function Actions({ isSearching = false, onCreate, className }) {
+export function Actions({ isSearching = false, className }) {
   const iconBtnClass =
     "flex items-center justify-center size-8 sm:size-9 rounded-app-md text-content-secondary hover:text-content-primary hover:bg-app-bg transition-colors";
 
   return (
     <div className={cn("flex items-center gap-1", className)}>
-      {/* Messages & Notifications (Desktop Only, hidden during active search) */}
       {!isSearching && (
         <>
           <Link to="/messages" className={cn(iconBtnClass, "hidden lg:flex")}>
@@ -21,16 +20,15 @@ export function Actions({ isSearching = false, onCreate, className }) {
             className={cn(iconBtnClass, "hidden lg:flex relative")}
           >
             <Bell className="size-4" />
+
             <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-brand-primary ring-2 ring-app-surface" />
           </Link>
         </>
       )}
 
-      {/* CREATE BUTTON: Hidden on mobile when searching */}
       {!isSearching && (
-        <button
-          type="button"
-          onClick={onCreate}
+        <Link
+          to="/post/create"
           className={cn(
             "flex items-center justify-center gap-1.5 h-8 sm:h-9 px-2.5 sm:px-3",
             "rounded-app-md bg-content-primary text-app-bg text-xs font-semibold tracking-wide",
@@ -39,7 +37,7 @@ export function Actions({ isSearching = false, onCreate, className }) {
         >
           <Plus className="size-4 stroke-[2.5]" />
           <span className="hidden sm:inline">Create</span>
-        </button>
+        </Link>
       )}
     </div>
   );
