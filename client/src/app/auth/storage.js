@@ -1,26 +1,38 @@
 const STORAGE_KEY = "auth";
 
+const EMPTY_AUTH_STORAGE = {
+  accounts: [],
+  activeAccountId: null,
+};
+
 function getAuthStorage() {
   const stored = localStorage.getItem(STORAGE_KEY);
 
   if (!stored) {
-    return {
-      accounts: [],
-      activeAccountId: null,
-    };
+    return { ...EMPTY_AUTH_STORAGE };
   }
 
   try {
-    return JSON.parse(stored);
+    const parsed = JSON.parse(stored);
+
+    // Guard against valid JSON with an invalid structure.
+    if (!parsed || typeof parsed !== "object") {
+      throw new Error("Invalid auth storage format");
+    }
+
+    return {
+      accounts: Array.isArray(parsed.accounts) ? parsed.accounts : [],
+      activeAccountId:
+        typeof parsed.activeAccountId === "string"
+          ? parsed.activeAccountId
+          : null,
+    };
   } catch (error) {
-    console.error("Failed to parse auth storage:", error);
+    console.error("Invalid auth storage. Resetting:", error);
 
     localStorage.removeItem(STORAGE_KEY);
 
-    return {
-      accounts: [],
-      activeAccountId: null,
-    };
+    return { ...EMPTY_AUTH_STORAGE };
   }
 }
 
