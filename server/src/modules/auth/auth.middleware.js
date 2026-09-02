@@ -1,8 +1,7 @@
 import jwt from "jsonwebtoken";
-
 import userRepository from "../user/user.repository.js";
 
-export default async function authenticate(req, res, next) {
+export async function authenticate(req, res, next) {
   try {
     const authorization = req.headers.authorization;
 
@@ -29,5 +28,31 @@ export default async function authenticate(req, res, next) {
     next();
   } catch (error) {
     next(error);
+  }
+}
+
+export async function optionalAuthenticate(req, res, next) {
+  try {
+    const authorization = req.headers.authorization;
+
+    // No token → continue as anonymous
+    if (!authorization) {
+      return next();
+    }
+
+    const token = authorization.replace("Bearer ", "");
+
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await userRepository.findUserById(payload.id);
+
+    if (user) {
+      req.user = user;
+    }
+
+    next();
+  } catch (error) {
+    // Invalid token → treat as anonymous
+    next();
   }
 }
