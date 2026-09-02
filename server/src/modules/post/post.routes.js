@@ -1,23 +1,27 @@
 import { Router } from "express";
-import postController from "./post.controller.js";
-import commentController from "../comment/comment.controller.js";
-import voteController from "../vote/vote.controller.js";
 
-import authenticate from "../auth/auth.middleware.js";
+import postController from "./post.controller.js";
+
+import { authenticate, optionalAuthenticate } from "../auth/auth.middleware.js";
+import voteRoutes from "../vote/vote.routes.js";
+import saveRoutes from "../save/save.routes.js";
 
 const router = Router();
 
 router.post("/", authenticate, postController.createPost);
 
-router.get("/", postController.getPosts);
+router.get("/", optionalAuthenticate, postController.getPosts);
 
-router.get("/:postId", postController.getPost);
+router.get("/:postId", optionalAuthenticate, postController.getPost);
 
-router.patch("/:postId", postController.updatePost);
+router.patch("/:postId", authenticate, postController.updatePost);
 
-router.delete("/:postId", postController.deletePost);
-router.post("/:postId/comments", authenticate, commentController.createComment);
-router.get("/:postId/comments", commentController.getComments);
+router.delete("/:postId", authenticate, postController.deletePost);
 
-router.post("/:postId/vote", authenticate, voteController.votePost);
+// Vote
+router.use("/:postId/vote", voteRoutes);
+
+// Save
+router.use("/:postId/save", saveRoutes);
+
 export default router;

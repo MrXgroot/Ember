@@ -1,8 +1,7 @@
-import postService from "./post.service.js";
+import * as postService from "./post.service.js";
 
 class PostController {
   async createPost(req, res) {
-    console.log(req.body);
     const post = await postService.createPost({
       postData: {
         ...req.body,
@@ -15,16 +14,19 @@ class PostController {
 
   async getPosts(req, res) {
     const { page, limit, sort, ...filters } = req.query;
-    console.log(req.query);
-    const posts = await postService.getPosts({
-      filters,
+    const posts = await postService.getPosts(
+      {
+        filters,
 
-      options: {
-        page,
-        limit,
-        sort,
+        options: {
+          page,
+          limit,
+          sort,
+        },
       },
-    });
+
+      req.user?.id,
+    );
 
     res.status(200).json(posts);
   }

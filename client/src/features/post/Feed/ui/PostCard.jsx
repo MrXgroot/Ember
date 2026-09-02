@@ -9,9 +9,16 @@ import {
   User as UserIcon,
 } from "lucide-react";
 import { cn } from "@/shared/integrations/cn";
-import { formatTimeAgo } from "@/shared/utils/date"; // or define above
+import { formatTimeAgo } from "@/shared/utils/date";
 import { getConvertedWebpUrl } from "../utils/getConvertedWebpUrl";
-export function PostCard({ post, onUpvote, onDownvote, className }) {
+
+export function PostCard({
+  post,
+  onUpvote,
+  onDownvote,
+  onToggleSave,
+  className,
+}) {
   const {
     _id,
     title,
@@ -21,8 +28,11 @@ export function PostCard({ post, onUpvote, onDownvote, className }) {
     user,
     community,
     createdAt,
-    userVote, // if your API sends 1, -1, or null for the active session
+    viewer = { vote: 0, isSaved: false }, // Destructured from API payload
   } = post;
+
+  const currentVote = viewer?.vote ?? 0;
+  const isSaved = Boolean(viewer?.isSaved);
 
   const authorName = user?.displayName || user?.username || "Anonymous";
   const authorHandle = user?.username ? `@${user.username}` : null;
@@ -93,13 +103,20 @@ export function PostCard({ post, onUpvote, onDownvote, className }) {
             </div>
           </div>
 
-          {/* Top Quick Actions */}
+          {/* Top Quick Actions (Bookmark / Save) */}
           <button
             type="button"
-            className="text-content-muted hover:text-content-primary p-1 rounded-app-sm transition-colors"
-            title="Save post"
+            onClick={onToggleSave}
+            className={cn(
+              "p-1 rounded-app-sm transition-colors",
+              isSaved
+                ? "text-brand fill-brand"
+                : "text-content-muted hover:text-content-primary",
+            )}
+            title={isSaved ? "Unsave post" : "Save post"}
+            aria-label={isSaved ? "Unsave post" : "Save post"}
           >
-            <Bookmark className="w-4 h-4" />
+            <Bookmark className={cn("w-4 h-4", isSaved && "fill-current")} />
           </button>
         </div>
 
@@ -118,7 +135,7 @@ export function PostCard({ post, onUpvote, onDownvote, className }) {
           )}
         </div>
 
-        {/* 3. Media Preview (Cloudinary Image container) */}
+        {/* 3. Media Preview */}
         {media?.url && (
           <div className="mt-1 rounded-app-md overflow-hidden border border-app-border/70 bg-black/40 max-h-[500px] flex items-center justify-center">
             <img
@@ -140,12 +157,15 @@ export function PostCard({ post, onUpvote, onDownvote, className }) {
                 onClick={onUpvote}
                 className={cn(
                   "p-1.5 rounded-full transition-colors",
-                  "text-content-muted hover:text-orange-500 hover:bg-orange-500/10",
-                  userVote === 1 && "text-orange-500 bg-orange-500/10",
+                  currentVote === 1
+                    ? "text-orange-500 bg-orange-500/10"
+                    : "text-content-muted hover:text-orange-500 hover:bg-orange-500/10",
                 )}
                 aria-label="Upvote"
               >
-                <ArrowBigUp className="w-4 h-4" />
+                <ArrowBigUp
+                  className={cn("w-4 h-4", currentVote === 1 && "fill-current")}
+                />
               </button>
 
               <span
@@ -164,12 +184,18 @@ export function PostCard({ post, onUpvote, onDownvote, className }) {
                 onClick={onDownvote}
                 className={cn(
                   "p-1.5 rounded-full transition-colors",
-                  "text-content-muted hover:text-blue-500 hover:bg-blue-500/10",
-                  userVote === -1 && "text-blue-500 bg-blue-500/10",
+                  currentVote === -1
+                    ? "text-blue-500 bg-blue-500/10"
+                    : "text-content-muted hover:text-blue-500 hover:bg-blue-500/10",
                 )}
                 aria-label="Downvote"
               >
-                <ArrowBigDown className="w-4 h-4" />
+                <ArrowBigDown
+                  className={cn(
+                    "w-4 h-4",
+                    currentVote === -1 && "fill-current",
+                  )}
+                />
               </button>
             </div>
 
