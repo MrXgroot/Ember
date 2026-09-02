@@ -1,18 +1,34 @@
 // modules/comment/comment.routes.js
 
 import { Router } from "express";
-import commentController from "./comment.controller.js";
+
+import * as commentController from "./comment.controller.js";
+import { authenticate } from "../auth/auth.middleware.js";
 
 const router = Router();
 
-router.post("/", commentController.createComment);
+// Comments belonging to a post
+router.post(
+  "/posts/:postId/comments",
+  authenticate,
+  commentController.createComment,
+);
 
-router.get("/", commentController.getComments);
+router.get("/posts/:postId/comments", commentController.getComments);
 
-router.get("/:commentId", commentController.getComment);
+// Individual comment
+router.get("/comments/:commentId", commentController.getComment);
 
-router.patch("/:commentId", commentController.updateComment);
+router.patch(
+  "/comments/:commentId",
+  authenticate,
+  commentController.updateComment,
+);
 
-router.delete("/:commentId", commentController.deleteComment);
+router.delete(
+  "/comments/:commentId",
+  authenticate,
+  commentController.deleteComment,
+);
 
 export default router;

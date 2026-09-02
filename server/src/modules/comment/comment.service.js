@@ -1,12 +1,18 @@
 // modules/comment/comment.service.js
 
-import commentRepository from "./comment.repository.js";
+import * as commentRepository from "./comment.repository.js";
+
+const COMMENT_POPULATE = [
+  {
+    path: "user",
+    select: "username displayName avatar",
+  },
+];
 
 function buildCommentTree(comments) {
   const commentMap = new Map();
   const roots = [];
 
-  // Create lookup map
   for (const comment of comments) {
     const node = {
       ...comment.toObject(),
@@ -16,7 +22,6 @@ function buildCommentTree(comments) {
     commentMap.set(node._id.toString(), node);
   }
 
-  // Build tree
   for (const comment of commentMap.values()) {
     if (!comment.parent) {
       roots.push(comment);
@@ -32,40 +37,33 @@ function buildCommentTree(comments) {
 
   return roots;
 }
-const COMMENT_POPULATE = [
-  {
-    path: "user",
-    select: "username displayName avatar",
-  },
-];
-class CommentService {
-  async createComment(commentData) {
-    return await commentRepository.create({
-      ...commentData,
-      parent: commentData.parent ?? null,
-    });
-  }
 
-  async getComments(filters = {}, options = {}) {
-    const comments = await commentRepository.findMany(filters, {
-      ...options,
-      populate: COMMENT_POPULATE,
-    });
-
-    return buildCommentTree(comments);
-  }
-
-  async getComment(id) {
-    return await commentRepository.findById(id);
-  }
-
-  async updateComment(id, commentData) {
-    return await commentRepository.updateById(id, commentData);
-  }
-
-  async deleteComment(id) {
-    return await commentRepository.deleteById(id);
-  }
+export async function createComment(commentData) {
+  return await commentRepository.create({
+    ...commentData,
+    parent: commentData.parent ?? null,
+  });
 }
 
-export default new CommentService();
+export async function getComments(filters = {}, options = {}) {
+  const comments = await commentRepository.findMany(filters, {
+    ...options,
+    populate: COMMENT_POPULATE,
+  });
+
+  return buildCommentTree(comments);
+}
+
+export async function getComment(id) {
+  return await commentRepository.findById(id, {
+    populate: COMMENT_POPULATE,
+  });
+}
+
+export async function updateComment(id, commentData) {
+  return await commentRepository.updateById(id, commentData);
+}
+
+export async function deleteComment(id) {
+  return await commentRepository.deleteById(id);
+}

@@ -7,37 +7,16 @@ class CommentRepository {
     return await Comment.create(commentData);
   }
 
-  async findById(id) {
-    return await Comment.findById(id);
+  async findById(id, options = {}) {
+    return await Comment.findById(id, null, options);
   }
 
-  async findOne(filter) {
-    return await Comment.findOne(filter);
+  async findOne(filter, options = {}) {
+    return await Comment.findOne(filter, null, options);
   }
 
   async findMany(filter = {}, options = {}) {
     return await Comment.find(filter, null, options);
-  }
-
-  async findByPost(postId, options = {}) {
-    return await Comment.find(
-      {
-        post: postId,
-        parent: null,
-      },
-      null,
-      options,
-    );
-  }
-
-  async findReplies(parentId, options = {}) {
-    return await Comment.find(
-      {
-        parent: parentId,
-      },
-      null,
-      options,
-    );
   }
 
   async updateById(id, commentData) {
