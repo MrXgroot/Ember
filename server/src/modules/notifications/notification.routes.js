@@ -1,11 +1,11 @@
 import express from "express";
 
 import notificationController from "./notification.controller.js";
-import authMiddleware from "../auth/auth.middleware.js";
 
+import { authenticate } from "../auth/auth.middleware.js";
 const router = express.Router();
 
-router.use(authMiddleware);
+router.use(authenticate);
 
 router.get("/", notificationController.getNotifications);
 

@@ -1,7 +1,7 @@
 // modules/community/community.routes.js
 
 import { Router } from "express";
-import authenticate from "../auth/auth.middleware.js";
+import { authenticate } from "../auth/auth.middleware.js";
 import {
   createCommunity,
   deleteCommunity,
