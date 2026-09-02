@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/shared/integrations/cn";
 import { formatTimeAgo } from "@/shared/utils/date"; // or define above
-
+import { getConvertedWebpUrl } from "../utils/getConvertedWebpUrl";
 export function PostCard({ post, onUpvote, onDownvote, className }) {
   const {
     _id,
@@ -122,7 +122,7 @@ export function PostCard({ post, onUpvote, onDownvote, className }) {
         {media?.url && (
           <div className="mt-1 rounded-app-md overflow-hidden border border-app-border/70 bg-black/40 max-h-[500px] flex items-center justify-center">
             <img
-              src={media.url}
+              src={getConvertedWebpUrl(media.url)}
               alt={title || "Post media"}
               loading="lazy"
               className="w-full h-auto max-h-[500px] object-contain cursor-pointer hover:scale-[1.01] transition-transform duration-200"
