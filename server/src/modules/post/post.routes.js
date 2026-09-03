@@ -5,6 +5,7 @@ import postController from "./post.controller.js";
 import { authenticate, optionalAuthenticate } from "../auth/auth.middleware.js";
 import voteRoutes from "../vote/vote.routes.js";
 import saveRoutes from "../save/save.routes.js";
+import commentRoutes from "../comment/comment.routes.js";
 
 const router = Router();
 
@@ -23,5 +24,7 @@ router.use("/:postId/vote", voteRoutes);
 
 // Save
 router.use("/:postId/save", saveRoutes);
+
+router.use("/:postId/comments", commentRoutes);
 
 export default router;

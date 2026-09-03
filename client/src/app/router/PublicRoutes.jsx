@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 
 import { HomePage } from "@/pages";
-import { PostPage } from "@/pages";
+import { PostPage } from "@/pages/post/details";
 import { CommunityPage } from "@/pages/community/CommunityPage";
 
 import { PopularPage } from "@/pages/popular";
