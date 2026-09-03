@@ -1,23 +1,31 @@
 import React, { useState, useRef } from "react";
 import { Search as SearchIcon, X } from "lucide-react";
+import { useLocation } from "react-router-dom";
+
 import { Brand } from "./ui/Brand";
 import { Search } from "./ui/Search";
-import { Actions } from "./ui/Actions";
+import { MessageAction } from "./ui/MessageAction";
+import { NotificationAction } from "./ui/NotificationAction";
+import { CreateAction } from "./ui/CreateAction";
 import { UserMenu } from "./ui/UserMenu";
 import { Hamburger } from "./ui/Hamburger";
+
 import { cn } from "@/shared/integrations/cn";
-import { useModal } from "@/app/modal";
-import { useAuthGuard } from "@/app/auth";
 
 export function Navbar({ className, onToggle }) {
   const [isSearching, setIsSearching] = useState(false);
   const searchInputRef = useRef(null);
-  const { open } = useModal();
-  const auth = useAuthGuard();
+
+  const { pathname } = useLocation();
+
+  const isCreatePostPage = pathname === "/post/create";
 
   const handleStartSearch = () => {
     setIsSearching(true);
-    setTimeout(() => searchInputRef.current?.focus(), 60);
+
+    setTimeout(() => {
+      searchInputRef.current?.focus();
+    }, 60);
   };
 
   const handleStopSearch = () => {
@@ -27,19 +35,20 @@ export function Navbar({ className, onToggle }) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 w-full h-14 bg-app-surface border-b border-app-border",
-        // Removed overflow-hidden so the dropdown can visually escape the header
-        "flex items-center justify-between px-2.5 sm:px-4 shrink-0",
+        "sticky top-0 z-40 w-full h-14",
+        "bg-app-surface border-b border-app-border",
+        "flex items-center justify-between",
+        "px-2.5 sm:px-4 shrink-0",
         className,
       )}
     >
-      {/* 1. LEFT ZONE: Hamburger + Brand */}
+      {/* Left Zone */}
       <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
         <Hamburger isSearching={isSearching} onClick={onToggle} />
         <Brand />
       </div>
 
-      {/* 2. CENTER ZONE: Expandable Search */}
+      {/* Center Zone */}
       <div
         className={cn(
           "flex items-center transition-all duration-200 ease-out",
@@ -64,14 +73,14 @@ export function Navbar({ className, onToggle }) {
         </div>
       </div>
 
-      {/* 3. RIGHT ZONE: Search Trigger + Actions + Avatar */}
+      {/* Right Zone */}
       <div
         className={cn(
           "flex items-center shrink-0 transition-all duration-150",
           isSearching ? "gap-1" : "gap-1.5 sm:gap-2",
         )}
       >
-        {/* Mobile Search Button */}
+        {/* Mobile Search */}
         {!isSearching && (
           <button
             type="button"
@@ -83,12 +92,18 @@ export function Navbar({ className, onToggle }) {
           </button>
         )}
 
-        {/* Actions */}
-        <Actions isSearching={isSearching} />
+        {/* Navbar Actions */}
+        {!isSearching && !isCreatePostPage && (
+          <>
+            <MessageAction />
+            <NotificationAction />
+            <CreateAction />
+          </>
+        )}
 
         <div className="h-4 w-px bg-app-border mx-0.5" />
 
-        {/* User Menu with Dropdown */}
+        {/* User Menu */}
         <UserMenu isSearching={isSearching} />
       </div>
     </header>
