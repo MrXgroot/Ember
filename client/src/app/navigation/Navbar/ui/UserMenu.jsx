@@ -3,16 +3,19 @@ import {
   ChevronDown,
   Check,
   UserPlus,
+  LogIn,
   LogOut,
-  AlertCircle,
+  User as UserIcon,
 } from "lucide-react";
 import { cn } from "@/shared/integrations/cn";
 import { useAuth } from "@/app/auth";
+import { useModal } from "@/app/modal";
 
 export function UserMenu({ isSearching = false, className }) {
   const { user, accounts, activeAccountId, switchAccount, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
+  const { open } = useModal();
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -34,9 +37,17 @@ export function UserMenu({ isSearching = false, className }) {
       .slice(0, 2)
       .toUpperCase() || "U";
 
-  const currentDisplayName = user?.displayName || user?.username || "Guest";
+  const hasAccounts = Array.isArray(accounts) && accounts.length > 0;
+  const isLoggedIn = !!user || hasAccounts;
+  const currentDisplayName =
+    user?.displayName || user?.username || (isLoggedIn ? "Account" : "Sign In");
   const currentAvatar = user?.avatar;
   const currentId = user?._id || activeAccountId;
+
+  const handleOpenAuthModal = () => {
+    setIsOpen(false);
+    open("auth");
+  };
 
   return (
     <div className="relative inline-block text-left" ref={menuRef}>
@@ -44,16 +55,16 @@ export function UserMenu({ isSearching = false, className }) {
       <button
         type="button"
         onClick={() => {
-          console.log("[UserMenu Debug] Clicked menu. Current state:", {
-            user,
-            accounts,
-            activeAccountId,
-          });
+          // If completely unauthenticated with no saved accounts, open modal directly
+          if (!isLoggedIn) {
+            handleOpenAuthModal();
+            return;
+          }
           setIsOpen((prev) => !prev);
         }}
         className={cn(
-          "flex items-center gap-1.5 p-1 rounded-lg select-none shrink-0 transition-all hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer border border-transparent",
-          isOpen && "bg-neutral-100 dark:bg-neutral-800",
+          "flex items-center gap-2 p-1.5 rounded-app-md select-none shrink-0 transition-all hover:bg-app-surface cursor-pointer border border-transparent",
+          isOpen && "bg-app-surface",
           className,
         )}
       >
@@ -64,27 +75,39 @@ export function UserMenu({ isSearching = false, className }) {
               alt={currentDisplayName}
               referrerPolicy="no-referrer"
               className={cn(
-                "rounded-full object-cover border border-neutral-300 dark:border-neutral-700 transition-all",
+                "rounded-full object-cover border border-app-border transition-all",
                 isSearching ? "size-6" : "size-8",
               )}
             />
-          ) : (
+          ) : isLoggedIn ? (
             <div
               className={cn(
-                "rounded-full bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800 flex items-center justify-center font-bold transition-all",
+                "rounded-full bg-brand-light text-brand-hover border border-brand-primary/20 flex items-center justify-center font-bold transition-all",
                 isSearching ? "size-6 text-[9px]" : "size-8 text-xs",
               )}
             >
               {getInitials(currentDisplayName)}
             </div>
+          ) : (
+            <div
+              className={cn(
+                "rounded-full bg-app-surface text-content-muted border border-app-border flex items-center justify-center transition-all",
+                isSearching ? "size-6" : "size-8",
+              )}
+            >
+              <UserIcon className={isSearching ? "size-3.5" : "size-4"} />
+            </div>
           )}
-          <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-neutral-900" />
+
+          {isLoggedIn && (
+            <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-emerald-500 ring-2 ring-app-bg" />
+          )}
         </div>
 
         {!isSearching && (
           <ChevronDown
             className={cn(
-              "hidden sm:block size-4 text-neutral-500 transition-transform duration-200",
+              "hidden sm:block size-4 text-content-muted transition-transform duration-200",
               isOpen && "rotate-180",
             )}
           />
@@ -93,23 +116,23 @@ export function UserMenu({ isSearching = false, className }) {
 
       {/* Dropdown Card */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-72 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-2xl py-2 z-[9999]">
+        <div className="absolute right-0 mt-2 w-72 rounded-app-lg bg-app-surface border border-app-border shadow-2xl py-2 z-[9999]">
           {/* Header */}
-          <div className="px-4 py-2 border-b border-neutral-100 dark:border-neutral-800">
-            <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-              Switch Account
+          <div className="px-4 py-2 border-b border-app-border">
+            <p className="text-xs font-semibold text-content-muted uppercase tracking-wider">
+              {hasAccounts ? "Switch Account" : "Account"}
             </p>
-            <p className="text-[11px] text-neutral-500 mt-0.5">
-              Available accounts:{" "}
-              {Array.isArray(accounts) ? accounts.length : 0}
-            </p>
+            {hasAccounts && (
+              <p className="text-[11px] text-content-muted mt-0.5">
+                Available accounts: {accounts.length}
+              </p>
+            )}
           </div>
 
-          {/* Accounts List */}
+          {/* Accounts List OR Empty State Action */}
           <div className="py-1 max-h-60 overflow-y-auto">
-            {Array.isArray(accounts) && accounts.length > 0 ? (
+            {hasAccounts ? (
               accounts.map((acc, index) => {
-                // Resolves nested { user: {...} } or flat account object
                 const accUser = acc?.user || acc || {};
                 const accountId = acc?.id || acc?._id || accUser?._id;
                 const name =
@@ -124,45 +147,40 @@ export function UserMenu({ isSearching = false, className }) {
                     key={accountId || index}
                     type="button"
                     onClick={() => {
-                      console.log("[UserMenu Debug] Switching to:", accountId);
                       if (accountId) {
                         switchAccount(accountId);
                       }
                       setIsOpen(false);
                     }}
                     className={cn(
-                      "w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer",
-                      isActive &&
-                        "bg-neutral-50 dark:bg-neutral-800/60 font-medium",
+                      "w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors hover:bg-app-bg cursor-pointer",
+                      isActive && "bg-app-bg/60 font-medium",
                     )}
                   >
-                    {/* Account Avatar */}
                     {avatarUrl ? (
                       <img
                         src={avatarUrl}
                         alt={name}
                         referrerPolicy="no-referrer"
-                        className="size-8 rounded-full object-cover border border-neutral-300 dark:border-neutral-700 shrink-0"
+                        className="size-8 rounded-full object-cover border border-app-border shrink-0"
                       />
                     ) : (
-                      <div className="size-8 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800 flex items-center justify-center font-bold text-xs shrink-0">
+                      <div className="size-8 rounded-full bg-brand-light text-brand-hover border border-brand-primary/20 flex items-center justify-center font-bold text-xs shrink-0">
                         {getInitials(name)}
                       </div>
                     )}
 
-                    {/* Account Info */}
                     <div className="flex-1 min-w-0">
-                      <p className="truncate text-neutral-900 dark:text-neutral-100 leading-tight">
+                      <p className="truncate text-content-primary leading-tight">
                         {name}
                       </p>
                       {email && (
-                        <p className="truncate text-xs text-neutral-500 leading-tight mt-0.5">
+                        <p className="truncate text-xs text-content-muted leading-tight mt-0.5">
                           {email}
                         </p>
                       )}
                     </div>
 
-                    {/* Active State Checkmark */}
                     {isActive && (
                       <Check className="size-4 text-emerald-500 shrink-0 stroke-[2.5]" />
                     )}
@@ -170,39 +188,47 @@ export function UserMenu({ isSearching = false, className }) {
                 );
               })
             ) : (
-              <div className="flex items-center gap-2 px-4 py-3 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 my-1 mx-2 rounded-lg">
-                <AlertCircle className="size-4 shrink-0" />
-                <span>No stored accounts found in auth state.</span>
+              /* If no accounts exist in state, show login callout */
+              <div className="p-3">
+                <button
+                  type="button"
+                  onClick={handleOpenAuthModal}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-app-md bg-brand-primary text-app-bg text-xs font-semibold hover:opacity-90 transition-all shadow-sm"
+                >
+                  <LogIn className="size-4" />
+                  <span>Log in or Sign up</span>
+                </button>
               </div>
             )}
           </div>
 
-          <div className="my-1 border-t border-neutral-100 dark:border-neutral-800" />
+          <div className="my-1 border-t border-app-border" />
 
           {/* Footer Actions */}
-          <button
-            type="button"
-            onClick={() => {
-              setIsOpen(false);
-              // Hook your login modal / OAuth redirect trigger here
-            }}
-            className="w-full flex items-center gap-2.5 px-4 py-2 text-left text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-          >
-            <UserPlus className="size-4 text-neutral-400" />
-            <span>Add another account</span>
-          </button>
+          {hasAccounts && (
+            <button
+              type="button"
+              onClick={handleOpenAuthModal}
+              className="w-full flex items-center gap-2.5 px-4 py-2 text-left text-sm text-content-secondary hover:text-content-primary hover:bg-app-bg transition-colors"
+            >
+              <UserPlus className="size-4 text-content-muted" />
+              <span>Add another account</span>
+            </button>
+          )}
 
-          <button
-            type="button"
-            onClick={() => {
-              logout();
-              setIsOpen(false);
-            }}
-            className="w-full flex items-center gap-2.5 px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
-          >
-            <LogOut className="size-4" />
-            <span>Log out</span>
-          </button>
+          {isLoggedIn && (
+            <button
+              type="button"
+              onClick={() => {
+                logout();
+                setIsOpen(false);
+              }}
+              className="w-full flex items-center gap-2.5 px-4 py-2 text-left text-sm text-red-500 hover:bg-red-500/10 transition-colors"
+            >
+              <LogOut className="size-4" />
+              <span>Log out</span>
+            </button>
+          )}
         </div>
       )}
     </div>
