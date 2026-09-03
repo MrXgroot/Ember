@@ -1,6 +1,6 @@
 // modules/comment/comment.service.js
 
-import * as commentRepository from "./comment.repository.js";
+import commentRepository from "./comment.repository.js";
 
 const COMMENT_POPULATE = [
   {

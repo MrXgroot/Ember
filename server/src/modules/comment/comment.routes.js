@@ -3,20 +3,15 @@
 import { Router } from "express";
 
 import * as commentController from "./comment.controller.js";
+
 import { authenticate } from "../auth/auth.middleware.js";
 
-const router = Router();
+const router = Router({ mergeParams: true });
 
-// Comments belonging to a post
-router.post(
-  "/posts/:postId/comments",
-  authenticate,
-  commentController.createComment,
-);
+router.post("/", authenticate, commentController.createComment);
 
-router.get("/posts/:postId/comments", commentController.getComments);
+router.get("/", commentController.getComments);
 
-// Individual comment
 router.get("/comments/:commentId", commentController.getComment);
 
 router.patch(
