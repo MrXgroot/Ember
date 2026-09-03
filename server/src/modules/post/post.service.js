@@ -19,7 +19,6 @@ export const POST_POPULATE = [
 
 async function enrichPost(post, userId) {
   const postData = post.toObject();
-
   if (!userId) {
     return {
       ...postData,
@@ -41,7 +40,6 @@ async function enrichPost(post, userId) {
       postId: post._id,
     }),
   ]);
-
   return {
     ...postData,
     viewer: {
@@ -80,12 +78,10 @@ export async function getPosts(request = {}, userId = null) {
   return enrichedPosts;
 }
 
-export async function getPost({ postId, userId = null }) {
-  console.log(postId);
+export async function getPost({ postId }, userId = null) {
   const post = await postRepository.findById(postId, {
     populate: POST_POPULATE,
   });
-
   if (!post) {
     throw new Error("Post not found");
   }

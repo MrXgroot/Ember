@@ -33,10 +33,12 @@ class PostController {
 
   async getPost(req, res) {
     const { postId } = req.params;
-
-    const post = await postService.getPost({
-      postId,
-    });
+    const post = await postService.getPost(
+      {
+        postId,
+      },
+      req.user?.id,
+    );
 
     res.status(200).json(post);
   }
