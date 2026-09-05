@@ -5,7 +5,6 @@ export function registerMessageSocket(io, socket) {
   socket.on("message:send", async (data) => {
     try {
       const { receiverId, content } = data;
-
       const message = await messageService.createMessage({
         senderId: socket.userId,
         receiverId,

@@ -1,6 +1,6 @@
 import * as messageRepository from "./message.repository.js";
-
-const MESSAGE_TTL = 2 * 24 * 60 * 60 * 1000;
+import * as userService from "../user/user.service.js";
+const MESSAGE_TTL = 7 * 24 * 60 * 60 * 1000;
 
 export async function createMessage({ senderId, receiverId, content }) {
   if (!content?.trim()) {
@@ -22,14 +22,26 @@ export async function createMessage({ senderId, receiverId, content }) {
 }
 
 export async function getMessages({ userId, otherUserId, limit, before }) {
-  return messageRepository.getMessages({
-    userId,
-    otherUserId,
-    limit,
-    before,
-  });
-}
+  try {
+    const [messages, recipient] = await Promise.all([
+      messageRepository.getMessages({
+        userId,
+        otherUserId,
+        limit,
+        before,
+      }),
 
+      userService.getUser(otherUserId),
+    ]);
+
+    return {
+      messages,
+      recipient,
+    };
+  } catch (error) {
+    throw error;
+  }
+}
 export async function deleteMessage({ messageId, userId }) {
   const message = await messageRepository.findById(messageId);
 

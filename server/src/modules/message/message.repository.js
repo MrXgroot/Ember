@@ -1,9 +1,13 @@
 import { Message } from "./message.model.js";
 import mongoose from "mongoose";
 export async function createMessage(data) {
-  return Message.create(data);
-}
+  const message = await Message.create(data);
 
+  return Message.findById(message._id)
+    .populate("sender", "displayName username avatar")
+    .populate("receiver", "displayName username avatar")
+    .lean();
+}
 export async function getMessages({ userId, otherUserId, limit = 30, before }) {
   const filter = {
     $or: [
@@ -25,7 +29,7 @@ export async function getMessages({ userId, otherUserId, limit = 30, before }) {
   }
 
   return Message.find(filter)
-    .sort({ createdAt: -1 })
+    .sort({ createdAt: 1 })
     .limit(Number(limit))
     .populate("sender", "displayName username avatar")
     .populate("receiver", "displayName username avatar")
