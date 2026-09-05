@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import { socket } from "@/shared/integrations/socket/socket";
 import { useAuth } from "../auth";
+
 export function SocketProvider({ children }) {
   const { token } = useAuth();
-  console.log(token);
+
   useEffect(() => {
     if (!token) {
       return;
@@ -12,6 +13,7 @@ export function SocketProvider({ children }) {
     socket.auth = {
       token,
     };
+
     socket.connect();
 
     const handleConnect = () => {
@@ -29,7 +31,7 @@ export function SocketProvider({ children }) {
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);
     };
-  }, []);
+  }, [token]);
 
   return children;
 }

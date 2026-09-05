@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/app/auth";
 
 import {
   emitSendMessage,
@@ -14,6 +15,7 @@ import { messageKeys } from "../queryKeys";
 
 export function useMessageSocket(userId, { onError } = {}) {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const sendMessage = useCallback((data) => {
     emitSendMessage(data);
@@ -24,26 +26,49 @@ export function useMessageSocket(userId, { onError } = {}) {
   }, []);
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || !user) return;
 
     const handleMessage = (message) => {
       queryClient.setQueryData(messageKeys.conversation(userId), (oldData) => {
-        const messages = oldData?.data ?? oldData ?? [];
+        if (!oldData) return oldData;
 
-        // Prevent duplicates
+        const messages = oldData.messages ?? [];
+
         if (messages.some((item) => item._id === message._id)) {
           return oldData;
         }
 
-        return [...messages, message];
+        const enrichedMessage = {
+          ...message,
+
+          sender:
+            message.sender === user._id
+              ? {
+                  _id: user._id,
+                  displayName: user.displayName,
+                  username: user.username,
+                  avatar: user.avatar,
+                }
+              : message.sender,
+        };
+
+        return {
+          ...oldData,
+          messages: [...messages, enrichedMessage],
+        };
       });
     };
 
     const handleMessageDeleted = ({ messageId }) => {
       queryClient.setQueryData(messageKeys.conversation(userId), (oldData) => {
-        const messages = oldData?.data ?? oldData ?? [];
+        if (!oldData) return oldData;
 
-        return messages.filter((message) => message._id !== messageId);
+        const messages = oldData.messages ?? [];
+
+        return {
+          ...oldData,
+          messages: messages.filter((message) => message._id !== messageId),
+        };
       });
     };
 
@@ -58,7 +83,7 @@ export function useMessageSocket(userId, { onError } = {}) {
       cleanupDeleted?.();
       cleanupError?.();
     };
-  }, [userId, queryClient, onError]);
+  }, [userId, user, queryClient, onError]);
 
   return {
     sendMessage,
