@@ -10,13 +10,13 @@ import {
 import { cn } from "@/shared/integrations/cn";
 import { useAuth } from "@/app/auth";
 import { useModal } from "@/app/modal";
-
+import { useNavigate } from "react-router-dom";
 export function UserMenu({ isSearching = false, className }) {
   const { user, accounts, activeAccountId, switchAccount, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
   const { open } = useModal();
-
+  const navigate = useNavigate();
   // Close menu when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
@@ -148,6 +148,8 @@ export function UserMenu({ isSearching = false, className }) {
                     type="button"
                     onClick={() => {
                       if (accountId) {
+                        navigate("/");
+
                         switchAccount(accountId);
                       }
                       setIsOpen(false);
