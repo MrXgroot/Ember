@@ -4,6 +4,7 @@ import { HomePage } from "@/pages";
 import { PostPage } from "@/pages/post/details";
 import { CommunityPage } from "@/pages/community/CommunityPage";
 
+import { AllPage } from "@/pages/all";
 import { PopularPage } from "@/pages/popular";
 
 import { ExploreCommunitiesPage } from "@/pages/explore/communities";
@@ -17,16 +18,19 @@ import { InboxPage } from "@/pages/message/inbox";
 import { ChatPage } from "@/pages/message/chat";
 
 import { CreatePostPage } from "@/pages/post/create";
+
 function PublicRoutes() {
   return (
     <Routes>
       {/* ==================== HOME ==================== */}
       <Route path="/" element={<HomePage />} />
+      <Route path="/all" element={<AllPage />} />
       <Route path="/popular" element={<PopularPage />} />
 
       {/* ==================== POSTS ==================== */}
       <Route path="/post/:postId" element={<PostPage />} />
       <Route path="/post/create" element={<CreatePostPage />} />
+
       {/* ==================== COMMUNITIES ==================== */}
       <Route path="/c/:slug" element={<CommunityPage />} />
 
@@ -41,7 +45,7 @@ function PublicRoutes() {
       <Route path="/notifications" element={<NotificationsPage />} />
       <Route path="/settings" element={<SettingsPage />} />
 
-      {/* ==================== USER ==================== */}
+      {/* ==================== MESSAGES ==================== */}
       <Route path="/messages" element={<InboxPage />} />
       <Route path="/messages/:userId" element={<ChatPage />} />
     </Routes>

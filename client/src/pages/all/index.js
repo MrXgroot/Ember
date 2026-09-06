@@ -1,0 +1,1 @@
+export { AllPage } from "./AllPage";
