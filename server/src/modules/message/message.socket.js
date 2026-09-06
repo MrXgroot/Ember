@@ -5,16 +5,17 @@ export function registerMessageSocket(io, socket) {
   socket.on("message:send", async (data) => {
     try {
       const { receiverId, content } = data;
+
       const message = await messageService.createMessage({
         senderId: socket.userId,
         receiverId,
         content,
       });
 
-      // Send to receiver
+      // Send the saved/populated message to the receiver
       io.to(userRoom(receiverId)).emit("message:new", message);
 
-      // Also send back to sender
+      // Also send the canonical message back to sender
       socket.emit("message:sent", message);
     } catch (error) {
       socket.emit("message:error", {
@@ -32,7 +33,6 @@ export function registerMessageSocket(io, socket) {
         userId: socket.userId,
       });
 
-      // Tell both sides that the message disappeared
       io.to(userRoom(message.receiver)).emit("message:deleted", {
         messageId,
       });
