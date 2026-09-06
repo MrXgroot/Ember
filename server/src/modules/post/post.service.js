@@ -1,8 +1,6 @@
-// modules/post/post.service.js
-
 import postRepository from "./post.repository.js";
 import PostQuery from "./post.query.js";
-
+import commentRepository from "../comment/comment.repository.js";
 import { getUserVote } from "../vote/vote.service.js";
 import { isPostSaved } from "../save/save.service.js";
 
@@ -19,9 +17,20 @@ export const POST_POPULATE = [
 
 async function enrichPost(post, userId) {
   const postData = post.toObject();
+
+  const commentCount = await commentRepository.count({
+    post: post._id,
+  });
+
   if (!userId) {
     return {
       ...postData,
+
+      metrics: {
+        ...postData.metrics,
+        comments: commentCount,
+      },
+
       viewer: {
         vote: null,
         isSaved: false,
@@ -40,8 +49,15 @@ async function enrichPost(post, userId) {
       postId: post._id,
     }),
   ]);
+
   return {
     ...postData,
+
+    metrics: {
+      ...postData.metrics,
+      comments: commentCount,
+    },
+
     viewer: {
       vote,
       isSaved,
@@ -61,32 +77,19 @@ export async function getPosts(request = {}, userId = null) {
     populate: POST_POPULATE,
   });
 
-  if (!userId) {
-    return posts.map((post) => ({
-      ...post.toObject(),
-      viewer: {
-        vote: null,
-        isSaved: false,
-      },
-    }));
-  }
-
-  const enrichedPosts = await Promise.all(
-    posts.map((post) => enrichPost(post, userId)),
-  );
-
-  return enrichedPosts;
+  return Promise.all(posts.map((post) => enrichPost(post, userId)));
 }
 
 export async function getPost({ postId }, userId = null) {
   const post = await postRepository.findById(postId, {
     populate: POST_POPULATE,
   });
+
   if (!post) {
     throw new Error("Post not found");
   }
 
-  return await enrichPost(post, userId);
+  return enrichPost(post, userId);
 }
 
 export async function updatePost({ postId, postData }) {
