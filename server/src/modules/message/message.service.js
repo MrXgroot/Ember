@@ -3,6 +3,7 @@ import * as userService from "../user/user.service.js";
 const MESSAGE_TTL = 7 * 24 * 60 * 60 * 1000;
 
 export async function createMessage({ senderId, receiverId, content }) {
+  console.log("calling");
   if (!content?.trim()) {
     throw new Error("Message content is required");
   }
