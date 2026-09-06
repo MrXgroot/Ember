@@ -1,6 +1,7 @@
 // modules/comment/comment.service.js
-
+import * as PostService from "../post/post.service.js";
 import commentRepository from "./comment.repository.js";
+import { emitNotification } from "../notification/notification.socket.js";
 
 const COMMENT_POPULATE = [
   {
@@ -39,10 +40,27 @@ function buildCommentTree(comments) {
 }
 
 export async function createComment(commentData) {
-  return await commentRepository.create({
+  const comment = await commentRepository.create({
     ...commentData,
     parent: commentData.parent ?? null,
   });
+
+  const post = await PostService.getPost({
+    postId: commentData.post,
+  });
+
+  emitNotification({
+    recipient: post.user._id,
+    actor: commentData.user,
+    type: commentData.parent ? "REPLY" : "COMMENT",
+    message: "commented on you post",
+    entity: {
+      type: "POST",
+      id: post._id,
+    },
+  });
+
+  return comment;
 }
 
 export async function getComments(filters = {}, options = {}) {
@@ -66,4 +84,10 @@ export async function updateComment(id, commentData) {
 
 export async function deleteComment(id) {
   return await commentRepository.deleteById(id);
+}
+
+export async function countByPost(postId) {
+  return Comment.count({
+    post: postId,
+  });
 }
