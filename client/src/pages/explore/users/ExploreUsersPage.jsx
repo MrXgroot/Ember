@@ -11,7 +11,7 @@ import { UserEmptyState } from "./ui/UserEmptyState";
 export function ExploreUsersPage({ className }) {
   const { data, isLoading, isError, refetch } = useUsers();
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("all"); // "all" | "online"
+  const [filter, setFilter] = useState("all");
 
   const users = Array.isArray(data)
     ? data
@@ -24,11 +24,17 @@ export function ExploreUsersPage({ className }) {
       (u?.bio || "").toLowerCase().includes(search.toLowerCase());
 
     if (filter === "online") return matchesSearch && u?.isOnline;
+
     return matchesSearch;
   });
 
   return (
-    <div className={cn("w-full flex flex-col gap-6 pb-12", className)}>
+    <div
+      className={cn(
+        "w-full flex flex-col gap-6 px-4 sm:px-6 lg:px-8 py-6 pb-12",
+        className,
+      )}
+    >
       <ExploreUsersHeader
         totalCount={users.length}
         search={search}
