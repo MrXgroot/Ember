@@ -8,6 +8,7 @@ import commentRoutes from "../modules/comment/comment.routes.js";
 import uploadRoutes from "../modules/upload/upload.routes.js";
 import messageRoutes from "../modules/message/message.routes.js";
 import saveRoutes from "../modules/save/save.routes.js";
+import notificationRoutes from "../modules/notification/notification.routes.js";
 const router = Router();
 
 router.use("/auth", authRoutes);
@@ -17,7 +18,7 @@ router.use("/communities", communityRoutes);
 router.use("/comments", commentRoutes);
 router.use("/upload", uploadRoutes);
 router.use("/messages", messageRoutes);
-
+router.use("/notifications", notificationRoutes);
 export default router;
 
 // have to correct the add vote/:postId and save/:postId

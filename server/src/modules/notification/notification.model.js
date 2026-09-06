@@ -21,17 +21,23 @@ const notificationSchema = new mongoose.Schema(
       enum: [
         "COMMENT",
         "REPLY",
+        "VOTE",
+        "MESSAGE",
         "MENTION",
-        "FOLLOW",
-        "POST",
         "COMMUNITY",
         "SYSTEM",
       ],
     },
 
+    message: {
+      type: String,
+      required: true,
+    },
+
     entity: {
       type: {
         type: String,
+        enum: ["POST", "COMMENT", "COMMUNITY", "MESSAGE"],
         default: null,
       },
 
@@ -45,12 +51,24 @@ const notificationSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+
+    expiresAt: {
+      type: Date,
+      default: () => new Date(Date.now() + 60 * 60 * 1000),
+      index: true,
+    },
   },
   {
     timestamps: true,
   },
 );
 
-notificationSchema.index({ recipient: 1, createdAt: -1 });
+// MongoDB automatically deletes the document when expiresAt is reached
+notificationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+
+notificationSchema.index({
+  recipient: 1,
+  createdAt: -1,
+});
 
 export default mongoose.model("Notification", notificationSchema);

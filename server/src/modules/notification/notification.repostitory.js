@@ -12,11 +12,13 @@ class NotificationRepository {
   async findById(id) {
     return Notification.findById(id)
       .populate("actor", "displayName username avatar")
-      .populate("recipient", "displayName username avatar");
+      .lean();
   }
 
   async findMany(filters = {}, options = {}) {
-    const { page = 1, limit = 20, sort = { createdAt: -1 } } = options;
+    const page = Number(options.page) || 1;
+    const limit = Number(options.limit) || 20;
+    const sort = options.sort || { createdAt: -1 };
 
     const skip = (page - 1) * limit;
 
@@ -25,7 +27,8 @@ class NotificationRepository {
         .populate("actor", "displayName username avatar")
         .sort(sort)
         .skip(skip)
-        .limit(limit),
+        .limit(limit)
+        .lean(),
 
       Notification.countDocuments(filters),
     ]);
@@ -47,8 +50,10 @@ class NotificationRepository {
       {
         readAt: new Date(),
       },
-      { new: true },
-    );
+      {
+        new: true,
+      },
+    ).lean();
   }
 
   async markAllAsRead(recipient) {
