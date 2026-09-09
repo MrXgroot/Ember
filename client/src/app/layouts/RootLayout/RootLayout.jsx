@@ -6,6 +6,7 @@ import { cn } from "@/shared/integrations/cn";
 import { Drawer } from "@/shared/ui";
 import { useDrawer } from "@/shared/ui/Drawer";
 import { AnimatePresence } from "framer-motion";
+import { BackendStatusBanner } from "@/features/backend/ui/BackendHealthBanner";
 function RootLayout({ className }) {
   const drawer = useDrawer();
   return (
@@ -17,7 +18,7 @@ function RootLayout({ className }) {
       )}
     >
       <Navbar onToggle={drawer.toggle} />
-
+      <BackendStatusBanner />
       <AppBody>
         <DesktopSidebarContainer className="hidden xl:block">
           <Sidebar />
