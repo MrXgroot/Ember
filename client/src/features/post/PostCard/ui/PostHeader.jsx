@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { Bookmark } from "lucide-react";
 import { cn } from "@/shared/integrations/cn";
 import { formatTimeAgo } from "@/shared/utils/date";
-import { Avatar } from "@/shared/ui/Avatar";
+import { Avatar } from "@/shared/ui/avatar";
 
 export function PostHeader({
   user,
