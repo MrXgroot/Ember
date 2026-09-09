@@ -1,7 +1,10 @@
 import { usePostsQuery, useVote } from "../hooks";
 import { LoadingState, ErrorState, EmptyState, PostList } from "./ui";
 // import { PostCard } from "../PostCard";
-import { PostCard } from "./ui/PostCard";
+// import { PostCard } from "./ui/PostCard";
+// ====================
+// chagned the post card to seperate component
+import { PostCard } from "../PostCard";
 
 export function Feed({ filters, options }) {
   const postsQuery = usePostsQuery({
