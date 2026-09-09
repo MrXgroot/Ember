@@ -1,14 +1,28 @@
 import React from "react";
-import { Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Search } from "lucide-react";
 
 export function InboxHeader({ count = 0, search, onSearchChange }) {
+  const navigate = useNavigate();
+
   return (
     <div className="p-4 border-b border-app-border bg-app-surface/90 backdrop-blur-sm flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="p-1.5 -ml-1.5 rounded-app-sm text-content-muted hover:text-content-primary hover:bg-app-bg transition-colors"
+            aria-label="Go back"
+            title="Go back"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </button>
+
           <h2 className="text-base font-bold tracking-tight text-content-primary">
             Messages
           </h2>
+
           <span className="text-[11px] px-2 py-0.5 rounded-app-md bg-brand-light text-brand-primary font-semibold">
             {count}
           </span>
@@ -17,6 +31,7 @@ export function InboxHeader({ count = 0, search, onSearchChange }) {
 
       <div className="relative group">
         <Search className="w-3.5 h-3.5 text-content-muted absolute left-3 top-1/2 -translate-y-1/2 group-focus-within:text-brand-primary transition-colors" />
+
         <input
           type="text"
           value={search}
