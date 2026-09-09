@@ -19,6 +19,14 @@ router.use("/comments", commentRoutes);
 router.use("/upload", uploadRoutes);
 router.use("/messages", messageRoutes);
 router.use("/notifications", notificationRoutes);
+
+//health
+
+router.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+  });
+});
 export default router;
 
 // have to correct the add vote/:postId and save/:postId
